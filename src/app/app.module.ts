@@ -14,7 +14,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import { GraphDisplayComponent } from './graph-display/graph-display.component';
 import { TaskDetailsComponent } from './task-details/task-details.component';
-import { GraphVisDirective } from './graph-display/graphvis.directive';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -22,7 +22,6 @@ import { GraphVisDirective } from './graph-display/graphvis.directive';
         GraphDisplayComponent,
         TaskDetailsComponent,
         GraphDisplayComponent,
-        GraphVisDirective
     ],
     imports: [
         BrowserModule,
@@ -36,6 +35,7 @@ import { GraphVisDirective } from './graph-display/graphvis.directive';
         AppRoutingModule,
         CommonModule,
         MatToolbarModule,
+        FormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent]

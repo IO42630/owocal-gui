@@ -1,28 +1,13 @@
-<mat-table class="lessons-table mat-elevation-z8" [dataSource]="dataSource">
-
-    <ng-container matColumnDef="task">
-        <mat-header-cell *matHeaderCellDef>Task</mat-header-cell>
-        <mat-cell *matCellDef="let cell">{{cell.task}}</mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="prio">
-        <mat-header-cell *matHeaderCellDef>Priority</mat-header-cell>
-        <mat-cell *matCellDef="let cell">{{cell.prio}}</mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-
-</mat-table>
-
 <div class="container">
 
-        <div class="col-lg-6">
-            <app-graph-display></app-graph-display>
-        </div>
-        <div class="col-lg-6">
-            <app-task-details></app-task-details>
+    <div class="col-lg-6">
+        <app-graph-display
+            (nodeSelected)="onNodeSelected()">
+
+        </app-graph-display>
+    </div>
+    <div class="col-lg-6">
+        <app-task-details [event]="selectedEvent"></app-task-details>
 
     </div>
 

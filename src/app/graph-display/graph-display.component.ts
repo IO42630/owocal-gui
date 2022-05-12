@@ -1,54 +1,102 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, AfterViewInit } from '@angular/core';
 
-import { DataSet} from 'vis-network/standalone';
+import * as d3 from 'd3';
+import { SimulationNodeDatum, SimulationLinkDatum } from 'd3-force';
+
+interface Frequency {
+    letter: string;
+    frequency: number;
+}
+
+interface MyNode extends SimulationNodeDatum {
+    id: string;
+}
+
 
 @Component({
-  selector: 'app-graph-display',
-  templateUrl: './graph-display.component.html'
+    selector: 'app-graph-display',
+    styles: [`
+        .links line {
+            stroke: #999;
+            stroke-opacity: 0.6;
+        }
+
+        .nodes circle {
+            stroke: #fff;
+            stroke-width: 1.5px;
+        }
+    `],
+    templateUrl: './graph-display.component.html',
+
 })
 export class GraphDisplayComponent implements OnInit {
 
 
-  graphData = {};
-
-  public ngOnInit(): void {
-
-  }
+    @Output()
+    nodeSelected = new EventEmitter();
 
 
-
-  ngAfterContentInit(){
-
-    var changeChosenEdgeShadowX = function (values, id, selected, hovering) {
-      console.log('foo')
-    };
-
-
-    // create an array with nodes
-    var nodes = new DataSet([
-      { id: 1, label: "Node 1", chosen : { label: false, node: changeChosenEdgeShadowX } },
-      { id: 2, label: "Node 2" },
-      { id: 3, label: "Node 3" },
-      { id: 4, label: "Node 4" },
-      { id: 5, label: "Node 5" }
-    ]);
+    ngOnInit() {
+        let svg = d3.select('svg');
+        console.log('svg', svg);
+        let width = +svg.attr('width');
+        let height = +svg.attr('height');
 
 
+        let nodes: SimulationNodeDatum[] = [
+            {index: 1},
+            {index: 2}
+        ];
+
+        let node = svg.append('g')
+            .attr('class', 'nodes')
+            .selectAll('circle')
+            .data(nodes)
+            .enter()
+            .append('circle')
+            .attr('r', 5)
+            .attr('fill', 'red');
+
+        console.log(node);
+
+        let links_data: SimulationLinkDatum<SimulationNodeDatum>[] = [
+            {source: nodes[0], target: nodes[1]}
+        ];
+
+        let link_force = d3.forceLink(links_data)
+            .id(function (d) { return d.index + ''; });
 
 
-    // create an array with edges
-    var edges = new DataSet([
-      { from: 1, to: 3 },
-      { from: 1, to: 2 },
-      { from: 2, to: 4 },
-      { from: 2, to: 5 },
-      { from: 3, to: 3 }
-    ]);
+        let link = svg.append('g')
+            .attr('class', 'links')
+            .selectAll('line')
+            .data(links_data)
+            .enter().append('line')
+            .attr('stroke-width', 2);
 
-    // provide the data in the vis format
-    this.graphData = {
-      "nodes": nodes,
-      "edges": edges
+
+      // TODO fix this with https://observablehq.com/@d3/force-directed-graph
+
+
+      node
+          .attr("cx", (d: any) => {return d.x; })
+          .attr("cy",  (d: any) => {return d.y; });
+
+
+      link
+          .attr("x1", (d: any) => {return d.source.x; })
+          .attr("y1", (d: any) => {return d.source.y; })
+          .attr("x2", (d: any) => {return d.target.x; })
+          .attr("y2", (d: any) => {return d.target.y; });
+
+      let simulation = d3.forceSimulation(nodes)
+          .force('charge_force', d3.forceManyBody())
+          .force('center_force', d3.forceCenter(width / 2, height / 2))
+          .force('links', link_force);
+
     }
-  }
+
+
+
+
 }

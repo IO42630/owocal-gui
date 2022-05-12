@@ -1,1 +1,10 @@
-<p>task-details works!</p>
+<div *ngIf="event?.id">
+    <div class="mb-3">
+        <label for="formGroupExampleInput" class="form-label">Title</label>
+        <input type="text" class="form-control" id="formGroupExampleInput" [(ngModel)]="event.title">
+    </div>
+    <div class="mb-3">
+        <label for="formGroupExampleInput2" class="form-label">Another label</label>
+        <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input placeholder">
+    </div>
+</div>
