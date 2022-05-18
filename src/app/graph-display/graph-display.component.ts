@@ -1,102 +1,159 @@
-import { Component, OnInit, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, AfterViewChecked, AfterViewInit } from '@angular/core';
+
 
 import * as d3 from 'd3';
-import { SimulationNodeDatum, SimulationLinkDatum } from 'd3-force';
-
-interface Frequency {
-    letter: string;
-    frequency: number;
-}
-
-interface MyNode extends SimulationNodeDatum {
-    id: string;
-}
+import { width, height, svg } from './config';
+import { data } from './data-mock.service';
 
 
 @Component({
     selector: 'app-graph-display',
-    styles: [`
-        .links line {
-            stroke: #999;
-            stroke-opacity: 0.6;
-        }
-
-        .nodes circle {
-            stroke: #fff;
-            stroke-width: 1.5px;
-        }
-    `],
+    styles: [],
     templateUrl: './graph-display.component.html',
 
 })
-export class GraphDisplayComponent implements OnInit {
+export class GraphDisplayComponent implements AfterViewInit {
 
 
     @Output()
     nodeSelected = new EventEmitter();
 
 
-    ngOnInit() {
-        let svg = d3.select('svg');
-        console.log('svg', svg);
-        let width = +svg.attr('width');
-        let height = +svg.attr('height');
+    ngAfterViewInit() {
+        const [width, height] = [600, 600];
+        const svg: d3.Selection<any, any, any, any> = d3.select('#Target').attr('width', width).attr('height', height);
 
 
-        let nodes: SimulationNodeDatum[] = [
-            {index: 1},
-            {index: 2}
-        ];
+        const {nodes, links} = data;
 
-        let node = svg.append('g')
-            .attr('class', 'nodes')
-            .selectAll('circle')
-            .data(nodes)
+
+        const gravity = -100;
+
+        const forceManyBody = d3.forceManyBody()
+            .strength(gravity);
+
+        const forceLink = d3.forceLink(links)
+            .id((d: any) => d.id)
+            .distance(50);
+
+
+        // @ts-ignore
+        let simulation = d3.forceSimulation(nodes)
+
+            .force('link', forceLink)
+            .force('charge', forceManyBody)
+            .force('center', d3.forceCenter(width / 2, height / 2));
+
+
+
+        // LINK INIT
+
+        const lineGenerator = d3.line()
+            .curve(d3.curveCardinal);
+
+        const linkFoo = svg
+            .selectAll('path.link')
+            .data(data.links)
             .enter()
-            .append('circle')
-            .attr('r', 5)
-            .attr('fill', 'red');
-
-        console.log(node);
-
-        let links_data: SimulationLinkDatum<SimulationNodeDatum>[] = [
-            {source: nodes[0], target: nodes[1]}
-        ];
-
-        let link_force = d3.forceLink(links_data)
-            .id(function (d) { return d.index + ''; });
+            .insert('path')
+            .attr('stroke', '#999')
+            .attr('stroke-opacity', 0.6)
+            .attr('stroke-dasharray', '3 2')
+            .attr('stroke-width', 1)
+            .attr('fill', 'none');
 
 
-        let link = svg.append('g')
-            .attr('class', 'links')
-            .selectAll('line')
-            .data(links_data)
-            .enter().append('line')
-            .attr('stroke-width', 2);
+        simulation.on('tick', () => {
+            console.log('tick happens');
+
+            // NODE
+            const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 
-      // TODO fix this with https://observablehq.com/@d3/force-directed-graph
+            const node = svg
+                .selectAll('circle')
+                .data(nodes)
+                .enter()
+                .append('circle')
+                .attr('r', 10)
+                .attr('stroke', '#ccc')
+                .attr('stroke-width', 0.5)
+                .style('fill', (d: any) => colorScale(d.zone));
 
 
-      node
-          .attr("cx", (d: any) => {return d.x; })
-          .attr("cy",  (d: any) => {return d.y; });
+            node
+                .attr('cx', (d: any) => d.x)
+                .attr('cy', (d: any) => d.y);
+
+            const drag: any = (simulation: any) => {
+
+                const dragstarted = (d: any) => {
+
+                    if (!d3.event.active) {
+
+                        simulation.alphaTarget(0.3).restart();
+
+                    }
+
+                    d.fx = d.x;
+                    d.fy = d.y;
+
+                };
+
+                const dragged = (d: any) => {
+
+                    d.fx = d3.event.x;
+                    d.fy = d3.event.y;
+
+                };
+
+                const dragended = (d: any) => {
+
+                    if (!d3.event.active) {
+
+                        simulation.alphaTarget(0);
+
+                    }
+
+                    d.fx = null;
+                    d.fy = null;
+
+                };
+
+                return d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended);
+
+            };
 
 
-      link
-          .attr("x1", (d: any) => {return d.source.x; })
-          .attr("y1", (d: any) => {return d.source.y; })
-          .attr("x2", (d: any) => {return d.target.x; })
-          .attr("y2", (d: any) => {return d.target.y; });
+            node.call(drag(simulation));
 
-      let simulation = d3.forceSimulation(nodes)
-          .force('charge_force', d3.forceManyBody())
-          .force('center_force', d3.forceCenter(width / 2, height / 2))
-          .force('links', link_force);
+            // LINK
+            linkFoo.attr("d", (d) => {
+
+
+                const mid = [
+                    // @ts-ignore
+                    (d.source.x + d.target.x) / 2,
+                    // @ts-ignore
+                    (d.source.y + d.target.y) / 2
+                ];
+
+                return lineGenerator([
+                    // @ts-ignore
+                    [d.source.x, d.source.y],
+                    // @ts-ignore
+                    mid,
+                    // @ts-ignore
+                    [d.target.x, d.target.y]
+                ]);
+
+            });
+        });
 
     }
-
-
 
 
 }

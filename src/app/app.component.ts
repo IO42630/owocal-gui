@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import { EventDto } from './model/event.dto';
 
 @Component({
   selector: 'app-root',
@@ -11,31 +10,11 @@ export class AppComponent {
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   title = 'gui';
 
-  selectedEvent = new EventDto(
-      1,
-      new Date(),
-      new Date(),
-      'title',
-      'description',
-      [2, 3],
-      [3, 4],
-      'prio',
-      ['tag1', 'tag2']
-  );
+
 
 
   onNodeSelected() {
-    this.selectedEvent = new EventDto(
-        1,
-        new Date(),
-        new Date(),
-        'title',
-        'description',
-        [2, 3],
-        [3, 4],
-        'prio',
-        ['tag1', 'tag2']
-    );
+
   }
 }
 
