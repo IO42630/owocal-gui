@@ -1,8 +1,8 @@
 export class DependencyDto {
 
     constructor(
-        public source: number,
-        public target: number,
+        public source: any,
+        public target: any,
         public weight: number,
         public type: string,
         public overlap: number

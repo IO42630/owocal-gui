@@ -13,6 +13,8 @@ let links: DependencyDto[] = [
     {source: 2, target: 3, weight: 0.2, type: 'Type1', overlap: 0},
     {source: 3, target: 4, weight: 0.2, type: 'Type2', overlap: 0},
     {source: 4, target: 1, weight: 0.2, type: 'Type1', overlap: 0},
+    {source: 1, target: 3, weight: 0.2, type: 'Type3', overlap: 0},
+    {source: 2, target: 4, weight: 0.2, type: 'Type5', overlap: 0},
 ];
 
 export const data = {nodes: nodes, links: links};
