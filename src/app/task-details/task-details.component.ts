@@ -40,6 +40,12 @@ export class TaskDetailsComponent implements OnInit {
         this.consumers = data.nodes.filter(node => consumerIds.indexOf(node.id) >= 0);
     }
 
+    clearTask() {
+        this.task = new TaskDto(-1, '', '');
+        this.suppliers = [];
+        this.consumers = [];
+    }
+
     save() {
         // save task
         // save dependencies
