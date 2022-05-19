@@ -19,6 +19,8 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, O
     private node?: any;
     private link?: any;
 
+    textContainer: any;
+
     @Input()
     taskSelectedFromDetail: number = 0;
 
@@ -46,6 +48,7 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, O
             .force('charge', forceManyBody)
             .force('center', d3.forceCenter(width / 2, height / 2));
 
+        // LINKS
         this.link = svg
             .selectAll('path.links')
             .data(data.links)
@@ -56,6 +59,7 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, O
             .attr('stroke-width', 1)
             .attr('fill', 'none');
 
+        // NODES
         const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
         this.node = svg
             .selectAll('circle')
@@ -65,6 +69,31 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, O
             .attr('stroke', '#ccc')
             .attr('stroke-width', 0.5)
             .style('fill', (d: any) => colorScale(d.zone));
+
+
+        // LABELS
+        const fontSizeScale = d3.scaleLinear()
+            .range([7, 12]);
+
+        this.textContainer = svg
+            .selectAll('g.label')
+            .data(data.nodes)
+            .enter()
+            .append('g');
+
+        this.textContainer
+            .append('text')
+            .text((d: any) => d.title)
+            .attr('font-size', (d: any) => fontSizeScale(d.influence))
+            .attr('transform', (d: any) => {
+
+                const scale = 10;
+                const x = scale + 2;
+                const y = scale + 4;
+                return `translate(${x}, ${y})`;
+
+            });
+
 
     }
 
@@ -89,6 +118,9 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, O
                 [d.target.x, d.target.y]
             ]);
         });
+        // LABELS
+        this.textContainer
+            .attr('transform', (d: any) => `translate(${d.x}, ${d.y})`);
     }
 
     drag(simulation?: Simulation<any, any>): any {
