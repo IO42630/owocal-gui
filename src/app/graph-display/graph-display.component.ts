@@ -12,7 +12,7 @@ import { data } from './data-mock.service';
     templateUrl: './graph-display.component.html',
 
 })
-export class GraphDisplayComponent implements AfterViewInit {
+export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked {
 
 
     @Output()
@@ -73,8 +73,7 @@ export class GraphDisplayComponent implements AfterViewInit {
             const node = svg
                 .selectAll('circle')
                 .data(nodes)
-                .enter()
-                .append('circle')
+                .join('circle')
                 .attr('r', 10)
                 .attr('stroke', '#ccc')
                 .attr('stroke-width', 0.5)
@@ -153,6 +152,9 @@ export class GraphDisplayComponent implements AfterViewInit {
             });
         });
 
+    }
+
+    ngAfterViewChecked(): void {
     }
 
 
