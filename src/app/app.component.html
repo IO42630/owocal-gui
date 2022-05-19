@@ -1,14 +1,16 @@
 <div class="container">
-
-    <div class="col-lg-6">
-        <app-graph-display
-            (nodeSelected)="onNodeSelected()">
-
-        </app-graph-display>
+    <div class="row">
+        <div class="col-6">
+            <app-graph-display
+                [taskSelectedFromDetail]="selectedTask"
+                (taskSelectedFromGraph)="selectedTask=$event">
+            </app-graph-display>
+        </div>
+        <div class="col-6">
+            <app-task-details
+                [taskSelectedFromGraph]="selectedTask"
+                (taskSelectedFromDetail)="selectedTask=$event">
+            </app-task-details>
+        </div>
     </div>
-    <div class="col-lg-6">
-        <app-task-details></app-task-details>
-
-    </div>
-
 </div>

@@ -1,10 +1,40 @@
-<div>
-    <div class="mb-3">
-        <label for="formGroupExampleInput" class="form-label">Title</label>
-        <input type="text" class="form-control" id="formGroupExampleInput">
+<div class="row">
+    <div class="col-3">Title</div>
+    <div class="col-9">
+        <input type="text" class="form-control" [(ngModel)]="task.title">
     </div>
-    <div class="mb-3">
-        <label for="formGroupExampleInput2" class="form-label">Another label</label>
-        <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input placeholder">
+
+</div>
+<div class="row">
+    <div class="col-3">Description</div>
+    <div class="col-9">
+        <input type="text" class="form-control" [(ngModel)]="task.description">
     </div>
 </div>
+<hr>
+<div class="row">
+    <div class="col-6">
+        <div class="list-group">
+            <a
+                *ngFor="let supplier of suppliers"
+                class="list-group-item list-group-item-action"
+                (click)="initTask(supplier.id)"
+            >
+                {{supplier.title}}
+            </a>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="list-group">
+            <a
+                *ngFor="let consumer of consumers"
+                class="list-group-item list-group-item-action"
+                (click)="initTask(consumer.id)"
+            >
+                {{consumer.title}}
+            </a>
+        </div>
+    </div>
+</div>
+
+

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {MatTableDataSource} from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +10,7 @@ export class AppComponent {
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   title = 'gui';
 
-
+  selectedTask: number = 0;
 
 
   onNodeSelected() {

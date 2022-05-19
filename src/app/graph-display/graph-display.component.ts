@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, AfterViewChecked, AfterViewInit } from '@angular/core';
+import { Component, Output, EventEmitter, AfterViewChecked, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 
 import * as d3 from 'd3';
@@ -13,14 +13,17 @@ import { data } from './data-mock.service';
     templateUrl: './graph-display.component.html',
 
 })
-export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked {
+export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, OnChanges {
 
     private simulation?: Simulation<any, any>;
     private node?: any;
     private link?: any;
 
+    @Input()
+    taskSelectedFromDetail: number = 0;
+
     @Output()
-    nodeSelected = new EventEmitter();
+    taskSelectedFromGraph = new EventEmitter();
 
 
     ngAfterViewInit() {
@@ -114,6 +117,10 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked {
             .on('start', dragStarted)
             .on('drag', dragged)
             .on('end', dragEnded);
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        console.log('graph changes', this.taskSelectedFromDetail);
     }
 
 
