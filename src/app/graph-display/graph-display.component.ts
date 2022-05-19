@@ -1,10 +1,12 @@
-import { Component, Output, EventEmitter, AfterViewChecked, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Output, EventEmitter, AfterViewChecked, AfterViewInit, Input, OnInit } from '@angular/core';
 
 
 import * as d3 from 'd3';
 import { Simulation, BaseType } from 'd3';
 import { width, height } from './config';
 import { data } from './data-mock.service';
+import { TaskDto } from '../model/taskDto';
+import { Subject } from 'rxjs';
 
 
 @Component({
@@ -13,7 +15,7 @@ import { data } from './data-mock.service';
     templateUrl: './graph-display.component.html',
 
 })
-export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, OnChanges {
+export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, OnInit {
 
     private simulation?: Simulation<any, any>;
     private node?: any;
@@ -22,11 +24,16 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, O
     textContainer: any;
 
     @Input()
-    taskSelectedFromDetail: number = 0;
+    selectedTask!: Subject<number>;
 
     @Output()
-    taskSelectedFromGraph = new EventEmitter();
+    taskSelectedFromGraph = new EventEmitter<number>();
 
+    ngOnInit() {
+        this.selectedTask.subscribe(task => {
+            console.log('graph receives changes to selected Task: ', task);
+        });
+    }
 
     ngAfterViewInit() {
         const [width, height, gravity] = [600, 600, -100];
@@ -61,15 +68,28 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, O
 
         // NODES
         const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+        console.log(svg.selectAll('circle'));
         this.node = svg
             .selectAll('circle')
-            .data(data.nodes)
+            .data(data.nodes, (x: any) => x.id)
             .join('circle')
             .attr('r', 10)
             .attr('stroke', '#ccc')
             .attr('stroke-width', 0.5)
             .style('fill', (d: any) => colorScale(d.zone));
 
+
+        // NODE SUBTREE PROP
+        // @ts-ignore
+        this.node.append('taskId').text(({index: i}) => {
+
+            return data.nodes.find((node: TaskDto) => node.id === i)?.id;
+        });
+        // NODE EVENTS
+        this.node.on('click', () => {
+            const taskId = d3.event.target.childNodes[0].innerHTML;
+            this.taskSelectedFromGraph.emit(parseInt(taskId));
+        });
 
         // LABELS
         const fontSizeScale = d3.scaleLinear()
@@ -149,10 +169,6 @@ export class GraphDisplayComponent implements AfterViewInit, AfterViewChecked, O
             .on('start', dragStarted)
             .on('drag', dragged)
             .on('end', dragEnded);
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        console.log('graph changes', this.taskSelectedFromDetail);
     }
 
 

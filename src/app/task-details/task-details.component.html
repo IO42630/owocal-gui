@@ -18,7 +18,7 @@
             <a
                 *ngFor="let supplier of suppliers"
                 class="list-group-item list-group-item-action"
-                (click)="initTask(supplier.id)"
+                (click)="selectTask(supplier.id)"
             >
                 {{supplier.title}}
             </a>
@@ -31,7 +31,7 @@
             <a
                 *ngFor="let consumer of consumers"
                 class="list-group-item list-group-item-action"
-                (click)="initTask(consumer.id)"
+                (click)="selectTask(consumer.id)"
             >
                 {{consumer.title}}
             </a>

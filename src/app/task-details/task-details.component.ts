@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { TaskDto } from '../model/taskDto';
 import { data } from '../graph-display/data-mock.service';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-task-details',
@@ -8,27 +9,23 @@ import { data } from '../graph-display/data-mock.service';
 })
 export class TaskDetailsComponent implements OnInit {
 
-    task!: TaskDto;
+    nullTask = new TaskDto(-1, '', '');
+    task = this.nullTask;
     suppliers: TaskDto[] = [];
     consumers: TaskDto[] = [];
 
     @Input()
-    taskSelectedFromGraph: number = 0;
+    selectedTask!: Subject<number>;
 
     @Output()
     taskSelectedFromDetail = new EventEmitter();
 
-    constructor() {
-
-    }
 
     ngOnInit(): void {
-        this.initTask(2);
+        this.selectedTask.subscribe(task => this.initTask(task));
     }
 
     initTask(id: number) {
-        this.taskSelectedFromDetail.emit(id);
-
         this.task = data.nodes[id];
         const supplierIds = data.links
             .filter(link => link.targetId === this.task.id)
@@ -44,6 +41,11 @@ export class TaskDetailsComponent implements OnInit {
         this.task = new TaskDto(-1, '', '');
         this.suppliers = [];
         this.consumers = [];
+    }
+
+    selectTask(id: number) {
+        this.taskSelectedFromDetail.emit(id);
+        this.initTask(id);
     }
 
     save() {
