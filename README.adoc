@@ -4,7 +4,9 @@
 
 === About
 
-A graph based calendar / process planner.
+* A graph based calendar / process planner.
+* Repo for frontend.
+* See also `owocal-server`.
 
 image::owo.png[,10%]
 
