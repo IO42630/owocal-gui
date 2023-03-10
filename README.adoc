@@ -1,6 +1,14 @@
+:toc:
+:toclevels: 5
+
+
 === About
 
 A graph based calendar / process planner.
+
+image::owo.png[,10%]
+
+{empty} +
 
 === Planned Features
 
