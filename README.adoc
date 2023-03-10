@@ -33,3 +33,10 @@ image::owo.png[,10%]
 *** Event details
 * Deployment
 ** PAS -> Spring -> Angular
+
+{empty} +
+
+=== Run
+
+* `docker compose up --force-recreate`
+* go to `http://localhost:9051/`

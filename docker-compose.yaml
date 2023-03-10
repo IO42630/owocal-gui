@@ -1,0 +1,25 @@
+version: '3'
+services:
+
+    owocal-gui:
+        container_name: owocal-gui
+        image: owocal-gui:latest
+        build:
+            context: ${WS}/owocal-gui
+            dockerfile: Dockerfile
+        ports:
+            - "9051:4220"
+        depends_on:
+            - owocal-server
+
+    owocal-server:
+        container_name: owocal-server
+        image: owocal-server:latest
+        build:
+            context: ${WS}/owocal-server
+            dockerfile: Dockerfile
+        ports:
+            - "9052:8090"
+
+networks:
+    owo-net:
