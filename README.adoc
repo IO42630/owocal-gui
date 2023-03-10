@@ -8,11 +8,13 @@
 * Repo for frontend.
 * See also `owocal-server`.
 
-image::owo.png[,10%]
+image::img/owo.png[,10%]
 
 {empty} +
 
 === Planned Features
+
+image::img/proto1.png[,100%]
 
 * From plain canvas:
 ** Add event
